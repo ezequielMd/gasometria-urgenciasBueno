@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Ácido-Base PRO | Urgencias</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        /* Estilos del Toggle Modo Tutor */
+        .tutor-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fef3c7;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #fde68a;
+            margin-bottom: 20px;
+        }
+        .tutor-toggle-container label {
+            margin: 0 0 0 10px;
+            cursor: pointer;
+            color: #92400e;
+            font-size: 1rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            color: #4b5563;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        /* Contenedor de botones principales */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        button {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-limpiar {
+            background-color: #6b7280;
+        }
+        .btn-limpiar:hover {
+            background-color: #4b5563;
+        }
+        .btn-copiar {
+            background-color: #10b981;
+            margin-top: 10px;
+            display: none; /* Se oculta hasta calcular */
+        }
+        .btn-copiar:hover {
+            background-color: #059669;
+        }
+        #resultados-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            display: none;
+        }
+        .warning-text { color: #b91c1c; font-weight: bold; }
+        .tutor-text { color: #047857; font-size: 0.9rem; margin-top: 4px; display: block; background: #ecfdf5; padding: 5px; border-radius: 4px; border-left: 3px solid #10b981;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Analizador Ácido-Base</h1>
+    <p class="subtitle">V4.1 Edición Docente & Clínica</p>
+
+    <div class="tutor-toggle-container">
+        <input type="checkbox" id="modo-tutor" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="modo-tutor">Activar Modo Tutor 🎓</label>
+    </div>
+    
+    <h2 class="section-title">Gasometría Arterial</h2>
+    <div class="grid">
+        <div class="form-group">
+            <label for="ph">pH</label>
+            <input type="number" id="ph" step="0.01" placeholder="Ej. 7.35">
+        </div>
+        <div class="form-group">
+            <label for="pco2">pCO2 (mmHg)</label>
+            <input type="number" id="pco2" step="0.1" placeholder="Ej. 40">
+        </div>
+        <div class="form-group">
+            <label for="hco3">HCO3 (mEq/L o mmol/L)</label>
+            <input type="number" id="hco3" step="0.1" placeholder="Ej. 24">
+        </div>
+        <div class="form-group">
+            <label for="lactato">Lactato (mmol/L)</label>
+            <input type="number" id="lactato" step="0.1" placeholder="Ej. 1.5">
+        </div>
+    </div>
+
+    <h2 class="section-title">Contexto Clínico (Respiratorio)</h2>
+    <div class="radio-group">
+        <label><input type="radio" name="cronicidad" value="agudo" checked> Agudo</label>
+        <label><input type="radio" name="cronicidad" value="cronico"> Crónico</label>
+    </div>
+
+    <h2 class="section-title">Química Sanguínea (Gaps y Osmolaridad)</h2>
+    <div class="grid">
+        <div class="form-group">
+            <label for="na">Sodio - Na (mEq/L)</label>
+            <input type="number" id="na" step="0.1" placeholder="Ej. 140">
+        </div>
+        <div class="form-group">
+            <label for="cl">Cloro - Cl (mEq/L)</label>
+            <input type="number" id="cl" step="0.1" placeholder="Ej. 100">
+        </div>
+        <div class="form-group">
+            <label for="albumina">Albúmina (g/dL o g/L)</label>
+            <input type="number" id="albumina" step="0.1" placeholder="Ej. 4.0 o 40">
+        </div>
+        <div class="form-group">
+            <label for="glucosa">Glucosa (mg/dL)</label>
+            <input type="number" id="glucosa" step="1" placeholder="Ej. 90">
+        </div>
+        <div class="form-group">
+            <label for="urea">Urea/BUN (mg/dL)</label>
+            <input type="number" id="urea" step="0.1" placeholder="Ej. 30">
+        </div>
+        <div class="form-group">
+            <label for="osm_medida">Osmolaridad Medida (Lab)</label>
+            <input type="number" id="osm_medida" step="1" placeholder="Ej. 290">
+        </div>
+    </div>
+
+    <h2 class="section-title">Electrolitos Urinarios (Opcional)</h2>
+    <div class="grid">
+        <div class="form-group">
+            <label for="na_u">Na Urinario (mEq/L)</label>
+            <input type="number" id="na_u" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="k_u">K Urinario (mEq/L)</label>
+            <input type="number" id="k_u" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="cl_u">Cl Urinario (mEq/L)</label>
+            <input type="number" id="cl_u" step="0.1">
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="btn-calcular" style="flex: 2;">Calcular Diagnóstico</button>
+        <button id="btn-limpiar" class="btn-limpiar" style="flex: 1;">Limpiar</button>
+    </div>
+    
+    <button id="btn-copiar" class="btn-copiar">📋 Copiar a Nota Médica</button>
+
+    <div id="resultados-container">
+        <h3 style="margin-top: 0; color: #1e3a8a;">Interpretación Clínica:</h3>
+        <ul id="lista-resultados" style="padding-left: 20px; margin-bottom: 0; line-height: 1.5;">
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    const NORMAL_VALUES = { albumin: 4.0, ag: 12, hco3: 24, pco2: 40 };
+
+    function calculateAG(na, hco3, cl) { return na - (hco3 + cl); }
+    function calculateCorrectedAG(ag, observedAlbumin) { return ag + (0.25 * (NORMAL_VALUES.albumin - observedAlbumin)); }
+    function calculateUAG(urinaryNa, urinaryK, urinaryCl) { return (urinaryNa + urinaryK) - urinaryCl; }
+    function calculateOsmolality(na, glucose_mmol, urea_mmol) { return (2 * na) + glucose_mmol + urea_mmol; }
+    function calculateDeltaGap(measuredAG, measuredHCO3) { return (measuredAG - NORMAL_VALUES.ag) - (NORMAL_VALUES.hco3 - measuredHCO3); }
+
+    function expectedPaCO2MetabolicAcidosis(hco3) { const base = (1.5 * hco3) + 8; return { min: base - 2, max: base + 2, exact: base }; }
+    function expectedPaCO2MetabolicAlkalosis(hco3) { const base = (0.7 * hco3) + 20; return { min: base - 5, max: base + 5, exact: base }; }
+    function expectedPhRespiratoryAcidosisAcute(pco2) { return 7.40 - (0.008 * (pco2 - NORMAL_VALUES.pco2)); }
+    function expectedPhRespiratoryAcidosisChronic(pco2) { return 7.40 - (0.003 * (pco2 - NORMAL_VALUES.pco2)); }
+    function expectedPhRespiratoryAlkalosisAcute(pco2) { return 7.40 + (0.008 * (NORMAL_VALUES.pco2 - pco2)); }
+    function expectedPhRespiratoryAlkalosisChronic(pco2) { return 7.40 + (0.003 * (NORMAL_VALUES.pco2 - pco2)); }
+
+    function analizarGasometria(ph, pco2, hco3, lactato, na, cl, albumina, glucosa, urea, osm_medida, na_u, k_u, cl_u, esAgudo, isTutor) {
+        let resultados = []; 
+        let trastornoPrimario = "";
+
+        if (lactato !== null) {
+            if (lactato > 4.0) resultados.push(`<span class="warning-text">⚠️ ALERTA: Lactato Crítico (${lactato} mmol/L).</span>`);
+            else if (lactato > 2.0) resultados.push(`⚠️ <strong>Hiperlactatemia:</strong> (${lactato} mmol/L).`);
+        }
+
+        let agFinal = null;
+        let tieneHagma = false;
+        let albValue = 4.0;
+        
+        if (na !== null && cl !== null) {
+            let ag = calculateAG(na, hco3, cl);
+            agFinal = ag;
+            if (albumina !== null) {
+                albValue = albumina > 10 ? albumina / 10 : albumina;
+                agFinal = calculateCorrectedAG(ag, albValue);
+            }
+            if (agFinal > 12) tieneHagma = true; 
+        }
+
+        if (ph < 7.35) {
+            if (hco3 < 22 && pco2 <= 45) trastornoPrimario = "Acidosis Metabólica";
+            else if (pco2 > 45 && hco3 >= 22) trastornoPrimario = "Acidosis Respiratoria";
+            else if (hco3 < 22 && pco2 > 45) trastornoPrimario = "Trastorno Mixto (Acidosis Metabólica + Acidosis Respiratoria)";
+            else trastornoPrimario = "Acidemia (Patrón atípico)";
+        } else if (ph > 7.45) {
+            if (hco3 > 26 && pco2 >= 35) trastornoPrimario = "Alcalosis Metabólica";
+            else if (pco2 < 35 && hco3 <= 26) trastornoPrimario = "Alcalosis Respiratoria";
+            else if (hco3 > 26 && pco2 < 35) trastornoPrimario = "Trastorno Mixto (Alcalosis Metabólica + Alcalosis Respiratoria)";
+            else trastornoPrimario = "Alcalemia (Patrón atípico)";
+        } else {
+            if (tieneHagma) {
+                trastornoPrimario = pco2 < 40 
+                    ? "Trastorno Mixto Oculto (Acidosis Metabólica AG Elevado + Alcalosis Respiratoria)" 
+                    : "Trastorno Mixto Oculto (Acidosis Metabólica AG Elevado + Alcalosis Metabólica)";
+            } else if (pco2 > 45 && hco3 > 26) trastornoPrimario = "pH Normal (Acidosis Respiratoria compensada o Alcalosis Metabólica compensada)";
+            else if (pco2 < 35 && hco3 < 22) trastornoPrimario = "pH Normal (Alcalosis Respiratoria compensada o Acidosis Metabólica compensada)";
+            else trastornoPrimario = "Equilibrio Ácido-Base Normal";
+        }
+        
+        resultados.push(`<strong>Trastorno Principal:</strong> ${trastornoPrimario}`);
+
+        // GAPS Y MNEMOTECNIAS (MODO TUTOR)
+        if (agFinal !== null) {
+            let agStr = `<strong>Anion Gap:</strong> ${agFinal.toFixed(1)} mEq/L ${tieneHagma ? '<span class="warning-text">(ELEVADO)</span>' : '(Normal)'}`;
+            if (isTutor && albumina !== null) agStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: AG Corregido = [${na} - (${cl} + ${hco3})] + [0.25 x (4.0 - ${albValue})]</span>`;
+            resultados.push(agStr);
+            
+            if (tieneHagma) {
+                let delta = calculateDeltaGap(agFinal, hco3);
+                let deltaStr = `<strong>Delta Gap:</strong> ${delta.toFixed(1)}`;
+                if (isTutor) deltaStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: (${agFinal.toFixed(1)} - 12) - (24 - ${hco3})</span>`;
+                resultados.push(deltaStr);
+
+                if (delta < -6) resultados.push("👉 Sugiere: Acidosis metabólica hiperclorémica coexistente.");
+                else if (delta > 6) resultados.push("👉 Sugiere: Alcalosis metabólica coexistente.");
+                
+                if (isTutor) resultados.push(`<span class="tutor-text">🩺 <strong>Etiologías HAGMA (GOLDMARK):</strong> Glicoles, Oxoprolina, L-Lactato, D-Lactato, Metanol, Aspirina, Renal (Falla), Cetoacidosis.</span>`);
+
+            } else if (trastornoPrimario.includes("Acidosis Metabólica")) {
+                resultados.push("<strong>Clasificación:</strong> Acidosis Metabólica de Anion Gap NORMAL (Hiperclorémica).");
+                if (isTutor) resultados.push(`<span class="tutor-text">🩺 <strong>Etiologías NAGMA (HARDUP):</strong> Hiperalimentación, Acetazolamida, Renal Tubular Acidosis (ATR), Diarrea, Ureteroenterostomía, Pancreática fístula.</span>`);
+                
+                if (na_u !== null && k_u !== null && cl_u !== null) {
+                    let uag = calculateUAG(na_u, k_u, cl_u);
+                    resultados.push(`<strong>Anion Gap Urinario:</strong> ${uag.toFixed(1)} mEq/L`);
+                    if (isTutor) resultados.push(`<span class="tutor-text">👨‍🏫 Fórmula: (${na_u} + ${k_u}) - ${cl_u}. <br>Si es > 0: Problema Renal (ATR). Si es < 0: Pérdida digestiva (Diarrea).</span>`);
+                }
+            }
+        }
+
+        // COMPENSACIONES
+        if (trastornoPrimario !== "Equilibrio Ácido-Base Normal") {
+            if (trastornoPrimario.includes("Acidosis Metabólica")) {
+                let pco2Esperada = expectedPaCO2MetabolicAcidosis(hco3);
+                let compStr = `<strong>PaCO2 Esperada (Winter):</strong> ${pco2Esperada.min.toFixed(1)} - ${pco2Esperada.max.toFixed(1)} mmHg`;
+                if (isTutor) compStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: (1.5 x ${hco3}) + 8 ± 2 = ${pco2Esperada.exact.toFixed(1)}</span>`;
+                resultados.push(compStr);
+
+                if (pco2 > pco2Esperada.max && pco2 > 45) resultados.push("⚠️ <em>Trastorno secundario:</em> Acidosis Respiratoria sobreagregada.");
+                else if (pco2 < pco2Esperada.min) resultados.push("⚠️ <em>Trastorno secundario:</em> Alcalosis Respiratoria sobreagregada.");
+            }
+
+            if (trastornoPrimario.includes("Alcalosis Metabólica")) {
+                let pco2Esperada = expectedPaCO2MetabolicAlkalosis(hco3);
+                let compStr = `<strong>PaCO2 Esperada:</strong> ${pco2Esperada.min.toFixed(1)} - ${pco2Esperada.max.toFixed(1)} mmHg`;
+                if (isTutor) {
+                    compStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: (0.7 x ${hco3}) + 20 ± 5 = ${pco2Esperada.exact.toFixed(1)}</span>`;
+                    compStr += `<br><span class="tutor-text">🩺 <strong>Etiologías (CLEVER PD):</strong> Contracción volumen, Licoriz, Endócrino (Conn), Vómitos/SNG, Exceso base, Renina, Potasio bajo, Diuréticos.</span>`;
+                }
+                resultados.push(compStr);
+            }
+
+            if (trastornoPrimario.includes("Respiratoria") && !trastornoPrimario.includes("Mixto Oculto")) {
+                let phEsperado = trastornoPrimario.includes("Acidosis") 
+                    ? (esAgudo ? expectedPhRespiratoryAcidosisAcute(pco2) : expectedPhRespiratoryAcidosisChronic(pco2))
+                    : (esAgudo ? expectedPhRespiratoryAlkalosisAcute(pco2) : expectedPhRespiratoryAlkalosisChronic(pco2));
+                
+                let compStr = `<strong>pH Esperado (${esAgudo ? 'Agudo' : 'Crónico'}):</strong> ${phEsperado.toFixed(2)}`;
+                if (isTutor) {
+                    if (trastornoPrimario.includes("Acidosis")) compStr += `<br><span class="tutor-text">🩺 <strong>Etiologías (Acidosis Resp):</strong> Depresión SNC (opiáceos), Neuromuscular (Guillain-Barré), Obstrucción vía aérea, EPOC/Asma.</span>`;
+                    if (trastornoPrimario.includes("Alcalosis")) compStr += `<br><span class="tutor-text">🩺 <strong>Etiologías (Alcalosis Resp) CHAMPS:</strong> SNC, Hipoxia, Ansiedad, Ventilación Mec., Progesterona, Salicilatos/Sepsis.</span>`;
+                }
+                resultados.push(compStr);
+            }
+        }
+
+        // OSMOLARIDAD
+        if (na !== null && glucosa !== null && urea !== null) {
+            let glucosa_mmol = glucosa / 18;
+            let urea_mmol = urea / 2.8; 
+            let osmCalculada = calculateOsmolality(na, glucosa_mmol, urea_mmol);
+            
+            let osmStr = `<strong>Osmolaridad Calculada:</strong> ${osmCalculada.toFixed(1)} mOsm/kg`;
+            if (isTutor) osmStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: (2 x ${na}) + (${glucosa}/18) + (${urea}/2.8)</span>`;
+            resultados.push(osmStr);
+
+            if (osm_medida !== null) {
+                let osmGap = osm_medida - osmCalculada;
+                resultados.push(`<strong>Brecha Osmolar (Osmolar Gap):</strong> ${osmGap.toFixed(1)} mOsm/kg`);
+                if (osmGap > 10) resultados.push(`<span class="warning-text">☠️ ALERTA: Gap Osmolar Elevado. Descartar intoxicación (Metanol, Etilenglicol).</span>`);
+            }
+        }
+
+        return resultados;
+    }
+
+    // LISTENER PARA CALCULAR
+    document.getElementById('btn-calcular').addEventListener('click', function() {
+        let getVal = (id) => {
+            let val = parseFloat(document.getElementById(id).value);
+            return isNaN(val) ? null : val;
+        };
+
+        let ph = getVal('ph');
+        let pco2 = getVal('pco2');
+        let hco3 = getVal('hco3');
+
+        if (ph === null || pco2 === null || hco3 === null) {
+            alert("Por favor, ingresa al menos pH, pCO2 y HCO3.");
+            return;
+        }
+
+        let lactato = getVal('lactato');
+        let na = getVal('na');
+        let cl = getVal('cl');
+        let albumina = getVal('albumina');
+        let glucosa = getVal('glucosa');
+        let urea = getVal('urea');
+        let osm_medida = getVal('osm_medida');
+        let na_u = getVal('na_u');
+        let k_u = getVal('k_u');
+        let cl_u = getVal('cl_u');
+
+        let esAgudo = document.querySelector('input[name="cronicidad"]:checked').value === "agudo";
+        let isTutor = document.getElementById('modo-tutor').checked;
+
+        let resultados = analizarGasometria(ph, pco2, hco3, lactato, na, cl, albumina, glucosa, urea, osm_medida, na_u, k_u, cl_u, esAgudo, isTutor);
+
+        let lista = document.getElementById('lista-resultados');
+        lista.innerHTML = ""; 
+        resultados.forEach(item => {
+            let li = document.createElement('li');
+            li.innerHTML = item; 
+            li.style.marginBottom = "10px";
+            lista.appendChild(li);
+        });
+        
+        document.getElementById('resultados-container').style.display = "block";
+        document.getElementById('btn-copiar').style.display = "block";
+    });
+
+    // LISTENER PARA LIMPIAR DATOS
+    document.getElementById('btn-limpiar').addEventListener('click', function() {
+        // Limpiar todos los campos numéricos
+        document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+        
+        // Resetear botones de radio al valor por defecto (Agudo)
+        document.querySelector('input[name="cronicidad"][value="agudo"]').checked = true;
+        
+        // Ocultar contenedores de resultados
+        document.getElementById('resultados-container').style.display = "none";
+        document.getElementById('btn-copiar').style.display = "none";
+        document.getElementById('lista-resultados').innerHTML = "";
+        
+        // Regresar la pantalla hacia arriba
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // LISTENER PARA COPIAR A NOTA MÉDICA
+    document.getElementById('btn-copiar').addEventListener('click', function() {
+        let listaHTML = document.getElementById('lista-resultados').innerHTML;
+        
+        let textoLimpio = listaHTML
+            .replace(/<li>/g, '• ') 
+            .replace(/<\/li>/g, '\n') 
+            .replace(/<br>/g, ' ') 
+            .replace(/<[^>]+>/g, '') 
+            .replace(/👨‍🏫|🩺|⚠️|☠️|👉/g, '') 
+            .replace(/&gt;/g, '>')
+            .replace(/&lt;/g, '<');
+
+        let notaMedica = `--- ANÁLISIS ÁCIDO-BASE ---\n` + textoLimpio.trim();
+
+        navigator.clipboard.writeText(notaMedica).then(() => {
+            let originalText = this.innerText;
+            this.innerText = "✅ ¡Copiado al Portapapeles!";
+            this.style.backgroundColor = "#059669";
+            setTimeout(() => {
+                this.innerText = originalText;
+                this.style.backgroundColor = "#10b981";
+            }, 2000);
+        }).catch(err => {
+            alert("Error al copiar: " + err);
+        });
+    });
+</script>
+</body>
+</html>
