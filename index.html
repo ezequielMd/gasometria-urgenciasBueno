@@ -31,7 +31,6 @@
             font-size: 0.9rem;
             margin-bottom: 20px;
         }
-        /* Estilos del Toggle Modo Tutor */
         .tutor-toggle-container {
             display: flex;
             align-items: center;
@@ -82,8 +81,6 @@
             align-items: center;
             margin-top: 10px;
         }
-        
-        /* Contenedor de botones principales */
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -101,23 +98,15 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #1d4ed8;
-        }
-        .btn-limpiar {
-            background-color: #6b7280;
-        }
-        .btn-limpiar:hover {
-            background-color: #4b5563;
-        }
+        button:hover { background-color: #1d4ed8; }
+        .btn-limpiar { background-color: #6b7280; }
+        .btn-limpiar:hover { background-color: #4b5563; }
         .btn-copiar {
             background-color: #10b981;
             margin-top: 10px;
-            display: none; /* Se oculta hasta calcular */
+            display: none; 
         }
-        .btn-copiar:hover {
-            background-color: #059669;
-        }
+        .btn-copiar:hover { background-color: #059669; }
         #resultados-container {
             margin-top: 20px;
             padding: 15px;
@@ -134,7 +123,7 @@
 
 <div class="container">
     <h1>Analizador Ácido-Base</h1>
-    <p class="subtitle">V4.1 Edición Docente & Clínica</p>
+    <p class="subtitle">V4.2 Edición Docente & Clínica</p>
 
     <div class="tutor-toggle-container">
         <input type="checkbox" id="modo-tutor" style="width: 20px; height: 20px; cursor: pointer;">
@@ -265,29 +254,29 @@
             if (agFinal > 12) tieneHagma = true; 
         }
 
+        // LÓGICA DE PH PARCHADA (V4.2)
         if (ph < 7.35) {
-            if (hco3 < 22 && pco2 <= 45) trastornoPrimario = "Acidosis Metabólica";
-            else if (pco2 > 45 && hco3 >= 22) trastornoPrimario = "Acidosis Respiratoria";
-            else if (hco3 < 22 && pco2 > 45) trastornoPrimario = "Trastorno Mixto (Acidosis Metabólica + Acidosis Respiratoria)";
+            if (hco3 <= 22 && pco2 <= 45) trastornoPrimario = "Acidosis Metabólica";
+            else if (pco2 >= 45 && hco3 >= 22) trastornoPrimario = "Acidosis Respiratoria";
+            else if (hco3 <= 22 && pco2 >= 45) trastornoPrimario = "Trastorno Mixto (Acidosis Metabólica + Acidosis Respiratoria)";
             else trastornoPrimario = "Acidemia (Patrón atípico)";
         } else if (ph > 7.45) {
-            if (hco3 > 26 && pco2 >= 35) trastornoPrimario = "Alcalosis Metabólica";
-            else if (pco2 < 35 && hco3 <= 26) trastornoPrimario = "Alcalosis Respiratoria";
-            else if (hco3 > 26 && pco2 < 35) trastornoPrimario = "Trastorno Mixto (Alcalosis Metabólica + Alcalosis Respiratoria)";
+            if (hco3 >= 26 && pco2 >= 35) trastornoPrimario = "Alcalosis Metabólica";
+            else if (pco2 <= 35 && hco3 <= 26) trastornoPrimario = "Alcalosis Respiratoria";
+            else if (hco3 >= 26 && pco2 <= 35) trastornoPrimario = "Trastorno Mixto (Alcalosis Metabólica + Alcalosis Respiratoria)";
             else trastornoPrimario = "Alcalemia (Patrón atípico)";
         } else {
             if (tieneHagma) {
                 trastornoPrimario = pco2 < 40 
                     ? "Trastorno Mixto Oculto (Acidosis Metabólica AG Elevado + Alcalosis Respiratoria)" 
                     : "Trastorno Mixto Oculto (Acidosis Metabólica AG Elevado + Alcalosis Metabólica)";
-            } else if (pco2 > 45 && hco3 > 26) trastornoPrimario = "pH Normal (Acidosis Respiratoria compensada o Alcalosis Metabólica compensada)";
-            else if (pco2 < 35 && hco3 < 22) trastornoPrimario = "pH Normal (Alcalosis Respiratoria compensada o Acidosis Metabólica compensada)";
+            } else if (pco2 >= 45 && hco3 >= 26) trastornoPrimario = "pH Normal (Acidosis Respiratoria compensada o Alcalosis Metabólica compensada)";
+            else if (pco2 <= 35 && hco3 <= 22) trastornoPrimario = "pH Normal (Alcalosis Respiratoria compensada o Acidosis Metabólica compensada)";
             else trastornoPrimario = "Equilibrio Ácido-Base Normal";
         }
         
         resultados.push(`<strong>Trastorno Principal:</strong> ${trastornoPrimario}`);
 
-        // GAPS Y MNEMOTECNIAS (MODO TUTOR)
         if (agFinal !== null) {
             let agStr = `<strong>Anion Gap:</strong> ${agFinal.toFixed(1)} mEq/L ${tieneHagma ? '<span class="warning-text">(ELEVADO)</span>' : '(Normal)'}`;
             if (isTutor && albumina !== null) agStr += `<br><span class="tutor-text">👨‍🏫 Fórmula: AG Corregido = [${na} - (${cl} + ${hco3})] + [0.25 x (4.0 - ${albValue})]</span>`;
@@ -316,7 +305,6 @@
             }
         }
 
-        // COMPENSACIONES
         if (trastornoPrimario !== "Equilibrio Ácido-Base Normal") {
             if (trastornoPrimario.includes("Acidosis Metabólica")) {
                 let pco2Esperada = expectedPaCO2MetabolicAcidosis(hco3);
@@ -352,7 +340,6 @@
             }
         }
 
-        // OSMOLARIDAD
         if (na !== null && glucosa !== null && urea !== null) {
             let glucosa_mmol = glucosa / 18;
             let urea_mmol = urea / 2.8; 
@@ -372,7 +359,6 @@
         return resultados;
     }
 
-    // LISTENER PARA CALCULAR
     document.getElementById('btn-calcular').addEventListener('click', function() {
         let getVal = (id) => {
             let val = parseFloat(document.getElementById(id).value);
@@ -417,27 +403,17 @@
         document.getElementById('btn-copiar').style.display = "block";
     });
 
-    // LISTENER PARA LIMPIAR DATOS
     document.getElementById('btn-limpiar').addEventListener('click', function() {
-        // Limpiar todos los campos numéricos
         document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
-        
-        // Resetear botones de radio al valor por defecto (Agudo)
         document.querySelector('input[name="cronicidad"][value="agudo"]').checked = true;
-        
-        // Ocultar contenedores de resultados
         document.getElementById('resultados-container').style.display = "none";
         document.getElementById('btn-copiar').style.display = "none";
         document.getElementById('lista-resultados').innerHTML = "";
-        
-        // Regresar la pantalla hacia arriba
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // LISTENER PARA COPIAR A NOTA MÉDICA
     document.getElementById('btn-copiar').addEventListener('click', function() {
         let listaHTML = document.getElementById('lista-resultados').innerHTML;
-        
         let textoLimpio = listaHTML
             .replace(/<li>/g, '• ') 
             .replace(/<\/li>/g, '\n') 
