@@ -15,7 +15,7 @@ Una herramienta web rápida, precisa y basada en evidencia para la interpretaci�
 
 ## 🛠️ Cómo usarla
 No requiere instalación. Puedes acceder a la calculadora directamente desde tu celular o computadora a través de este enlace:
-👉 **[COLOCA_AQUÍ_TU_ENLACE_DE_GITHUB_PAGES]**
+(https://ezequielmd.github.io/gasometria-urgenciasBueno/)
 
 ## 👨‍⚕️ Autor
 Desarrollado por el **Dr. Ezequiel Tapia Solís** para facilitar el abordaje clínico y enriquecer el proceso de enseñanza-aprendizaje significativo en el área de la salud.
